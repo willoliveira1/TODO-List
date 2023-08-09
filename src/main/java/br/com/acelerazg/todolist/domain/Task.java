@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 public class Task {
 
-    private int id;
     private String title;
     private String description;
     private LocalDateTime creationDate;
@@ -23,4 +22,24 @@ public class Task {
         lastModificationDate = LocalDateTime.now();
     }
 
+    public Task(String title, String description, LocalDateTime creationDate, LocalDateTime lastModificationDate, Status status, Category category, Priority priority) {
+        this.title = title;
+        this.description = description;
+        this.creationDate = creationDate;
+        this.lastModificationDate = lastModificationDate;
+        this.status = status;
+        this.category = category;
+        this.priority = priority;
+    }
+
+    @Override
+    public String toString() {
+        return title + "," +
+                description + "," +
+                creationDate + "," +
+                lastModificationDate + "," +
+                status + "," +
+                category + "," +
+                priority;
+    }
 }

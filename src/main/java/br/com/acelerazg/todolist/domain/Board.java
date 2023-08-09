@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Board {
 
-    private int id;
     private String title;
     private String description;
     private LocalDateTime creationDate;
@@ -18,5 +17,9 @@ public class Board {
         this.description = description;
         creationDate = LocalDateTime.now();
         lastModificationDate = LocalDateTime.now();
+    }
+
+    public void addTask(Task newTask) {
+        tasks.add(newTask);
     }
 }
