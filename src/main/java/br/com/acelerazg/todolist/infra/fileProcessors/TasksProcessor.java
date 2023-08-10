@@ -12,10 +12,9 @@ import java.util.List;
 
 public class TasksProcessor implements Processor<Task> {
 
-    String filePath;
+    String filePath = "src/main/resources/tasks.csv";
 
-    public TasksProcessor(String filePath) {
-        this.filePath = filePath;
+    public TasksProcessor() {
     }
 
     public List<Task> readFile() throws IOException {
@@ -32,18 +31,44 @@ public class TasksProcessor implements Processor<Task> {
                 Status status = Status.valueOf(attributes[4]);
                 Category category = new Category(attributes[5]);
                 Priority priority = Priority.valueOf(attributes[6]);
+                LocalDateTime endTime = LocalDateTime.parse(attributes[7]);
 
-                Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority);
+                Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority, endTime);
                 tasks.add(task);
             }
         }
         return tasks;
     }
 
-    public void writeFile(Task task) throws IOException {
+    public void writeLine(Task task) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath, true))) {
             bufferedWriter.append(task.toString());
             bufferedWriter.newLine();
+        }
+    }
+
+    public void deleteLine(int textLine) throws IOException {
+        List<Task> tasks = readFile();
+        tasks.remove(textLine - 1);
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            for (Task task : tasks) {
+                bufferedWriter.write(task.toString());
+                bufferedWriter.newLine();
+            }
+        }
+    }
+
+    public void updateLine(int textLine, Task updatedTask) throws IOException {
+        List<Task> tasks = readFile();
+        updatedTask.setLastModificationDate();
+        tasks.set(textLine - 1, updatedTask);
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            for (Task task : tasks) {
+                bufferedWriter.write(task.toString());
+                bufferedWriter.newLine();
+            }
         }
     }
 

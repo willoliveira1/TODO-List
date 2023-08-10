@@ -4,14 +4,14 @@ import br.com.acelerazg.todolist.domain.Category;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CategoriesProcessor implements Processor<Category> {
 
-    String filePath;
+    String filePath = "src/main/resources/categories.csv";
 
-    public CategoriesProcessor(String filePath) {
-        this.filePath = filePath;
+    public CategoriesProcessor() {
     }
 
     public List<Category> readFile() throws IOException {
@@ -25,10 +25,34 @@ public class CategoriesProcessor implements Processor<Category> {
         return categories;
     }
 
-    public void writeFile(Category category) throws IOException {
+    public void writeLine(Category category) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath, true))) {
             bufferedWriter.append(category.toString());
             bufferedWriter.newLine();
+        }
+    }
+
+    public void deleteLine(int textLine) throws IOException {
+        List<Category> categories = readFile();
+        categories.remove(textLine - 1);
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            for (Category category : categories) {
+                bufferedWriter.write(category.toString());
+                bufferedWriter.newLine();
+            }
+        }
+    }
+
+    public void updateLine(int textLine, Category updatedCategory) throws IOException {
+        List<Category> categories = readFile();
+        categories.set(textLine - 1, updatedCategory);
+
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
+            for (Category category : categories) {
+                bufferedWriter.write(category.toString());
+                bufferedWriter.newLine();
+            }
         }
     }
 

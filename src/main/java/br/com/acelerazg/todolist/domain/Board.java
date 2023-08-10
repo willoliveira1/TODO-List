@@ -22,4 +22,5 @@ public class Board {
     public void addTask(Task newTask) {
         tasks.add(newTask);
     }
+
 }

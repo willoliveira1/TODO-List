@@ -7,7 +7,9 @@ public interface Processor<T> {
 
     String filePath = null;
 
-    public List<T> readFile() throws IOException;
-    public void writeFile(T t) throws IOException;
+    List<T> readFile() throws IOException;
+    void writeLine(T t) throws IOException;
+    void deleteLine(int textLine) throws IOException;
+    void updateLine(int textLine, T t) throws IOException;
 
 }
