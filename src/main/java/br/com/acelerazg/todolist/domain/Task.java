@@ -35,20 +35,44 @@ public class Task {
         this.endDate = endDate;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
     public void setLastModificationDate() {
         this.lastModificationDate = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
-        return title + "," +
-                description + "," +
-                creationDate + "," +
-                lastModificationDate + "," +
-                status + "," +
-                category + "," +
-                priority + "," +
-                endDate;
+        return "Título: " + title + " | " +
+                "Descrição: " + description + " | " +
+                "Data de Criação: " + creationDate.toLocalDate() + " | " +
+                "Data da Última Alteração: " + lastModificationDate.toLocalDate() + " | " +
+                "Status: " + status + " | " +
+                "Categoria: " + category + " | " +
+                "Prioridade: " + priority + " | " +
+                "Data de Encerramento: " + endDate.toLocalDate();
+    }
+
+    public int compareToCategory(Task otherTask) {
+        return category.compareTo(otherTask.category);
+    }
+
+    public int compareToStatus(Task otherTask) {
+        return status.compareTo(otherTask.status);
+    }
+
+    public int compareToPriority(Task otherTask) {
+        return priority.compareTo(otherTask.priority);
     }
 
 }

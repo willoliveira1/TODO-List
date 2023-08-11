@@ -4,15 +4,11 @@ import br.com.acelerazg.todolist.domain.Category;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CategoriesProcessor implements Processor<Category> {
 
     String filePath = "src/main/resources/categories.csv";
-
-    public CategoriesProcessor() {
-    }
 
     public List<Category> readFile() throws IOException {
         List<Category> categories = new ArrayList<>();
@@ -34,7 +30,7 @@ public class CategoriesProcessor implements Processor<Category> {
 
     public void deleteLine(int textLine) throws IOException {
         List<Category> categories = readFile();
-        categories.remove(textLine - 1);
+        categories.remove(textLine);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
             for (Category category : categories) {
@@ -46,7 +42,7 @@ public class CategoriesProcessor implements Processor<Category> {
 
     public void updateLine(int textLine, Category updatedCategory) throws IOException {
         List<Category> categories = readFile();
-        categories.set(textLine - 1, updatedCategory);
+        categories.set(textLine, updatedCategory);
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
             for (Category category : categories) {
