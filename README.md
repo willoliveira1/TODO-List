@@ -11,5 +11,5 @@ Projeto para desenvolver um TODO List, foi feitra uma aplicação de console des
 
 ### Como executar
 O arquivo que tem o método main para a execução do projeto está em: 
-Pasta: `TODO-List/src/main/java/br/com/acelerazg/todolist/`
-Arquivo: `ApiApplication.java`
+* Pasta: `TODO-List/src/main/java/br/com/acelerazg/todolist/`
+* Arquivo: `ApiApplication.java`
