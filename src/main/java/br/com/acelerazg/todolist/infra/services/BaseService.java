@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface BaseService<T> {
 
-    public List<T> getAll() throws IOException;
-    public void add(T t) throws IOException;
-    public void update(int line, T t) throws IOException;
-    public void remove(int line) throws IOException;
+    List<T> getAll() throws IOException;
+    void add(T t) throws IOException;
+    void update(int line, T t) throws IOException;
+    void remove(int line) throws IOException;
 
 }

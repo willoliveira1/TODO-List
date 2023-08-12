@@ -17,8 +17,14 @@ public class TasksProcessor implements Processor<Task> {
 
     String filePath = "src/main/resources/tasks.csv";
 
+    public Task readLine(int line) throws IOException {
+        List<Task> tasks = readFile();
+        return tasks.get(line);
+    }
+
     public List<Task> readFile() throws IOException {
         List<Task> tasks = new ArrayList<>();
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -32,15 +38,18 @@ public class TasksProcessor implements Processor<Task> {
                 Category category = new Category(attributes[5]);
                 Priority priority = Priority.valueOf(attributes[6]);
                 LocalDateTime endTime = LocalDateTime.parse(attributes[7]);
+
                 Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority, endTime);
                 tasks.add(task);
             }
         }
+
         return tasks;
     }
 
     public List<Task> readFile(LocalDate date) throws IOException {
         List<Task> tasks = new ArrayList<>();
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -59,16 +68,10 @@ public class TasksProcessor implements Processor<Task> {
                     Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority, endTime);
                     tasks.add(task);
                 }
-
-
             }
         }
-        return tasks;
-    }
 
-    public Task readLine(int line) throws IOException {
-        List<Task> tasks = readFile();
-        return tasks.get(line);
+        return tasks;
     }
 
     public void writeLine(Task task) throws IOException {
@@ -76,13 +79,11 @@ public class TasksProcessor implements Processor<Task> {
             bufferedWriter.append(task.toString());
             bufferedWriter.newLine();
         }
+
         orderByPriority();
     }
 
-    public void deleteLine(int textLine) throws IOException {
-        List<Task> tasks = readFile();
-        tasks.remove(textLine - 1);
-
+    public void writeFile(List<Task> tasks) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
             for (Task task : tasks) {
                 bufferedWriter.write(task.toString());
@@ -94,56 +95,38 @@ public class TasksProcessor implements Processor<Task> {
     public void updateLine(int textLine, Task updatedTask) throws IOException {
         List<Task> tasks = readFile();
         updatedTask.setLastModificationDate();
-        tasks.set(textLine - 1, updatedTask);
+        tasks.set(textLine, updatedTask);
+        writeFile(tasks);
+    }
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Task task : tasks) {
-                bufferedWriter.write(task.toString());
-                bufferedWriter.newLine();
-            }
-        }
+    public void deleteLine(int textLine) throws IOException {
+        List<Task> tasks = readFile();
+        tasks.remove(textLine);
+        writeFile(tasks);
     }
 
     public void orderByCategory() throws IOException {
         List<Task> tasks = readFile();
         Collections.sort(tasks, new CategoryComparator());
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Task task : tasks) {
-                bufferedWriter.write(task.toString());
-                bufferedWriter.newLine();
-            }
-        }
+        writeFile(tasks);
     }
 
     public void orderByStatus() throws IOException {
         List<Task> tasks = readFile();
         Collections.sort(tasks, new StatusComparator());
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Task task : tasks) {
-                bufferedWriter.write(task.toString());
-                bufferedWriter.newLine();
-            }
-        }
+        writeFile(tasks);
     }
 
     public void orderByPriority() throws IOException {
         List<Task> tasks = readFile();
         Collections.sort(tasks, new PriorityComparator());
-
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Task task : tasks) {
-                bufferedWriter.write(task.toString());
-                bufferedWriter.newLine();
-            }
-        }
+        writeFile(tasks);
     }
 
     public void readFileToQuantityTasksByCategories() throws IOException {
         List<Task> tasks = readFile();
-
         Map<String, Integer> quantityByCategories = new HashMap<>();
+
         for (Task task : tasks) {
             String categoryName = task.getCategory().toString();
             quantityByCategories.put(categoryName, quantityByCategories.getOrDefault(categoryName, 0) + 1);

@@ -12,12 +12,14 @@ public class CategoriesProcessor implements Processor<Category> {
 
     public List<Category> readFile() throws IOException {
         List<Category> categories = new ArrayList<>();
+
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 categories.add(new Category(line));
             }
         }
+
         return categories;
     }
 
@@ -28,10 +30,7 @@ public class CategoriesProcessor implements Processor<Category> {
         }
     }
 
-    public void deleteLine(int textLine) throws IOException {
-        List<Category> categories = readFile();
-        categories.remove(textLine);
-
+    public void writeFile(List<Category> categories) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
             for (Category category : categories) {
                 bufferedWriter.write(category.toString());
@@ -43,13 +42,13 @@ public class CategoriesProcessor implements Processor<Category> {
     public void updateLine(int textLine, Category updatedCategory) throws IOException {
         List<Category> categories = readFile();
         categories.set(textLine, updatedCategory);
+        writeFile(categories);
+    }
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Category category : categories) {
-                bufferedWriter.write(category.toString());
-                bufferedWriter.newLine();
-            }
-        }
+    public void deleteLine(int textLine) throws IOException {
+        List<Category> categories = readFile();
+        categories.remove(textLine);
+        writeFile(categories);
     }
 
 }

@@ -53,14 +53,14 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Título: " + title + " | " +
-                "Descrição: " + description + " | " +
-                "Data de Criação: " + creationDate.toLocalDate() + " | " +
-                "Data da Última Alteração: " + lastModificationDate.toLocalDate() + " | " +
-                "Status: " + status + " | " +
-                "Categoria: " + category + " | " +
-                "Prioridade: " + priority + " | " +
-                "Data de Encerramento: " + endDate.toLocalDate();
+        return title + "," +
+                description + "," +
+                creationDate + "," +
+                lastModificationDate + "," +
+                status + "," +
+                category + "," +
+                priority + "," +
+                endDate;
     }
 
     public int compareToCategory(Task otherTask) {
