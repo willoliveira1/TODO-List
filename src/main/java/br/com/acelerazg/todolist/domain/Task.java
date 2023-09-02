@@ -2,9 +2,8 @@ package br.com.acelerazg.todolist.domain;
 
 import java.time.LocalDateTime;
 
-public class Task {
+public class Task extends Base {
 
-    private String title;
     private String description;
     private LocalDateTime creationDate;
     private LocalDateTime lastModificationDate;
@@ -13,19 +12,19 @@ public class Task {
     private Category category;
     private Priority priority;
 
-    public Task(String title, String description, Status status, Category category, Priority priority, LocalDateTime endDate) {
-        this.title = title;
+    public Task(int id, String title, String description, Status status, Category category, Priority priority, LocalDateTime endDate) {
+        super(id, title);
         this.description = description;
         this.status = status;
         this.category = category;
         this.priority = priority;
         this.endDate = endDate;
-        creationDate = LocalDateTime.now();
-        lastModificationDate = LocalDateTime.now();
+        this.creationDate = LocalDateTime.now();
+        this.lastModificationDate = LocalDateTime.now();
     }
 
-    public Task(String title, String description, LocalDateTime creationDate, LocalDateTime lastModificationDate, Status status, Category category, Priority priority, LocalDateTime endDate) {
-        this.title = title;
+    public Task(int id, String title, String description, LocalDateTime creationDate, LocalDateTime lastModificationDate, Status status, Category category, Priority priority, LocalDateTime endDate) {
+        super(id, title);
         this.description = description;
         this.creationDate = creationDate;
         this.lastModificationDate = lastModificationDate;
@@ -39,6 +38,10 @@ public class Task {
         return category;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -47,13 +50,49 @@ public class Task {
         this.creationDate = creationDate;
     }
 
-    public void setLastModificationDate() {
-        this.lastModificationDate = LocalDateTime.now();
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getLastModificationDate() {
+        return lastModificationDate;
+    }
+
+    public void setLastModificationDate(LocalDateTime lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     @Override
     public String toString() {
-        return title + "," +
+        return  super.toString()  + "," +
                 description + "," +
                 creationDate + "," +
                 lastModificationDate + "," +

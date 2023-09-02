@@ -1,16 +1,13 @@
-package br.com.acelerazg.todolist.infra.services;
-
-import br.com.acelerazg.todolist.infra.repository.CategoryRepository;
-import br.com.acelerazg.todolist.infra.repository.TaskRepository;
+package br.com.acelerazg.todolist.infra.view;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class BoardService {
+public class BoardView {
 
-    TaskRepository taskRepository = new TaskRepository();
-    CategoryRepository categoryRepository = new CategoryRepository();
+    TaskView taskView = new TaskView();
+    CategoryView categoryView = new CategoryView();
 
     public void boardGenerate() throws IOException {
         initialScreen();
@@ -94,14 +91,18 @@ public class BoardService {
             invalidOptions();
         }
 
-        if (selectedOption == 1) {
-            taskScreen();
-        } else if (selectedOption == 2) {
-            categoriesScreen();
-        } else if (selectedOption == 0) {
-            System.exit(0);
-        } else {
-            invalidOptions();
+        switch (selectedOption) {
+            case 1:
+                taskScreen();
+                break;
+            case 2:
+                categoriesScreen();
+                break;
+            case 0:
+                System.exit(0);
+                break;
+            default:
+                invalidOptions();
         }
     }
 
@@ -116,21 +117,27 @@ public class BoardService {
             invalidOptions();
         }
 
-        if (selectedOption == 1) {
-            taskListScreen();
-        } else if (selectedOption == 2) {
-            taskRepository.addTask();
-            backToInitialScreen();
-        } else if (selectedOption == 3) {
-            taskRepository.removeTask();
-            backToInitialScreen();
-        } else if (selectedOption == 4) {
-            taskRepository.updateTask();
-            backToInitialScreen();
-        } else if (selectedOption == 9) {
-            initialScreen();
-        } else {
-            invalidOptions();
+        switch (selectedOption) {
+            case 1:
+                taskListScreen();
+                break;
+            case 2:
+                taskView.addTask();
+                backToInitialScreen();
+                break;
+            case 3:
+                taskView.removeTask();
+                backToInitialScreen();
+                break;
+            case 4:
+                taskView.updateTask();
+                backToInitialScreen();
+                break;
+            case 9:
+                initialScreen();
+                break;
+            default:
+                invalidOptions();
         }
     }
 
@@ -145,28 +152,37 @@ public class BoardService {
             invalidOptions();
         }
 
-        if (selectedOption == 1) {
-            taskRepository.getAllTasks();
-            backToInitialScreen();
-        } else if (selectedOption == 2) {
-            taskRepository.getAllTasksOrderByCategory();
-            backToInitialScreen();
-        } else if (selectedOption == 3) {
-            taskRepository.getAllTasksOrderByPriority();
-            backToInitialScreen();
-        } else if (selectedOption == 4) {
-            taskRepository.getAllTasksOrderByStatus();
-            backToInitialScreen();
-        } else if (selectedOption == 5) {
-            taskRepository.getQuantityTasksByCategories();
-            backToInitialScreen();
-        } else if (selectedOption == 6) {
-            taskRepository.getAllTasksByDate();
-            backToInitialScreen();
-        } else if (selectedOption == 9) {
-            taskScreen();
-        } else {
-            invalidOptions();
+        switch (selectedOption) {
+            case 1:
+                taskView.getAllTasks();
+                backToInitialScreen();
+                break;
+            case 2:
+                taskView.getAllTasksOrderByCategory();
+                backToInitialScreen();
+                break;
+            case 3:
+                taskView.getAllTasksOrderByPriority();
+                backToInitialScreen();
+                break;
+            case 4:
+                taskView.getAllTasksOrderByStatus();
+                backToInitialScreen();
+                break;
+            case 5:
+                taskView.getQuantityTasksByCategories();
+                backToInitialScreen();
+                break;
+            case 6:
+                taskView.getAllTasksByDate();
+                backToInitialScreen();
+                break;
+            case 9:
+                clearConsole();
+                taskScreen();
+                break;
+            default:
+                invalidOptions();
         }
     }
 
@@ -181,24 +197,29 @@ public class BoardService {
             invalidOptions();
         }
 
-        if (selectedOption == 1) {
-            clearConsole();
-            categoryRepository.getAllCategories();
-            backToInitialScreen();
-        } else if (selectedOption == 2) {
-            categoryRepository.addCategory();
-            backToInitialScreen();
-        } else if (selectedOption == 3) {
-            clearConsole();
-            categoryRepository.removeCategory();
-            backToInitialScreen();
-        } else if (selectedOption == 4) {
-            categoryRepository.updateCategory();
-            backToInitialScreen();
-        } else if (selectedOption == 9) {
-            initialScreen();
-        } else {
-            invalidOptions();
+        switch (selectedOption) {
+            case 1:
+                categoryView.getAllCategories();
+                backToInitialScreen();
+                break;
+            case 2:
+                categoryView.addCategory();
+                backToInitialScreen();
+                break;
+            case 3:
+                categoryView.removeCategory();
+                backToInitialScreen();
+                break;
+            case 4:
+                categoryView.updateCategory();
+                backToInitialScreen();
+                break;
+            case 9:
+                clearConsole();
+                initialScreen();
+                break;
+            default:
+                invalidOptions();
         }
     }
 
@@ -211,7 +232,7 @@ public class BoardService {
     }
 
     private static void clearConsole() {
-        System.out.println("\n\n\n\n\n");
+        System.out.println(new String(new char[20]).replace("\0", "\r\n"));
     }
 
     private void invalidOptions() throws IOException {

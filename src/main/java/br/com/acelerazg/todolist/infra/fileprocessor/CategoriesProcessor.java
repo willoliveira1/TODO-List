@@ -1,4 +1,4 @@
-package br.com.acelerazg.todolist.infra.fileProcessors;
+package br.com.acelerazg.todolist.infra.fileprocessor;
 
 import br.com.acelerazg.todolist.domain.Category;
 
@@ -10,16 +10,26 @@ public class CategoriesProcessor implements Processor<Category> {
 
     String filePath = "src/main/resources/categories.csv";
 
+    @Override
+    public Category readById(int id) throws IOException {
+        List<Category> categories = readFile();
+        Category category = categories.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+        return category;
+    }
+
     public List<Category> readFile() throws IOException {
         List<Category> categories = new ArrayList<>();
-
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                categories.add(new Category(line));
+            while((line = bufferedReader.readLine()) != null) {
+                String[] attributes = line.split(",");
+                int id = Integer.parseInt(attributes[0]);
+                String title = attributes[1];
+
+                Category category = new Category(id, title);
+                categories.add(category);
             }
         }
-
         return categories;
     }
 
@@ -39,15 +49,17 @@ public class CategoriesProcessor implements Processor<Category> {
         }
     }
 
-    public void updateLine(int textLine, Category updatedCategory) throws IOException {
+    @Override
+    public void update(int id, Category updatedCategory) throws IOException {
         List<Category> categories = readFile();
-        categories.set(textLine, updatedCategory);
+        categories.set(id - 1, updatedCategory);
         writeFile(categories);
     }
 
-    public void deleteLine(int textLine) throws IOException {
+    @Override
+    public void deleteById(int id) throws IOException {
         List<Category> categories = readFile();
-        categories.remove(textLine);
+        categories.remove(id - 1);
         writeFile(categories);
     }
 
