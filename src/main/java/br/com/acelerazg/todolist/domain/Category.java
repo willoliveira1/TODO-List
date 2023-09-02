@@ -1,21 +1,24 @@
 package br.com.acelerazg.todolist.domain;
 
-public class Category implements Comparable<Category> {
+public class Category extends Base implements Comparable<Category> {
 
-    private String title;
+    public Category(int id, String title) {
+        super(id, title);
+    }
 
     public Category(String title) {
-        this.title = title;
+        super(title);
     }
 
     @Override
     public String toString() {
-        return title;
+        return this.getId() + "," +
+                this.getTitle();
     }
 
     @Override
     public int compareTo(Category otherCategory) {
-        return title.compareTo(String.valueOf(otherCategory));
+        return this.getTitle().compareTo(String.valueOf(otherCategory));
     }
 
 }

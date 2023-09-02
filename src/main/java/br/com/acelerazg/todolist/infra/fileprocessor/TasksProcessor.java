@@ -1,12 +1,9 @@
-package br.com.acelerazg.todolist.infra.fileProcessors;
+package br.com.acelerazg.todolist.infra.fileprocessor;
 
 import br.com.acelerazg.todolist.domain.Category;
 import br.com.acelerazg.todolist.domain.Priority;
 import br.com.acelerazg.todolist.domain.Status;
 import br.com.acelerazg.todolist.domain.Task;
-import br.com.acelerazg.todolist.domain.taskcomparators.CategoryComparator;
-import br.com.acelerazg.todolist.domain.taskcomparators.PriorityComparator;
-import br.com.acelerazg.todolist.domain.taskcomparators.StatusComparator;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -16,10 +13,10 @@ import java.util.*;
 public class TasksProcessor implements Processor<Task> {
 
     String filePath = "src/main/resources/tasks.csv";
-
-    public Task readLine(int line) throws IOException {
+    public Task readById(int id) throws IOException {
         List<Task> tasks = readFile();
-        return tasks.get(line);
+        Task task = tasks.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
+        return task;
     }
 
     public List<Task> readFile() throws IOException {
@@ -30,23 +27,24 @@ public class TasksProcessor implements Processor<Task> {
             while ((line = bufferedReader.readLine()) != null) {
                 String[] attributes = line.split(",");
 
-                String title = attributes[0];
-                String description = attributes[1];
-                LocalDateTime creationDate = LocalDateTime.parse(attributes[2]);
-                LocalDateTime lastModificationDate = LocalDateTime.parse(attributes[3]);
-                Status status = Status.valueOf(attributes[4]);
-                Category category = new Category(attributes[5]);
-                Priority priority = Priority.valueOf(attributes[6]);
-                LocalDateTime endTime = LocalDateTime.parse(attributes[7]);
+                int id = Integer.parseInt(attributes[0]);
+                String title = attributes[1];
+                String description = attributes[2];
+                LocalDateTime creationDate = LocalDateTime.parse(attributes[3]);
+                LocalDateTime lastModificationDate = LocalDateTime.parse(attributes[4]);
+                Status status = Status.valueOf(attributes[5]);
+                Category category = new Category(attributes[6]);
+                Priority priority = Priority.valueOf(attributes[7]);
+                LocalDateTime endTime = LocalDateTime.parse(attributes[8]);
 
-                Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority, endTime);
+                Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime);
                 tasks.add(task);
             }
         }
-
         return tasks;
     }
 
+    // TODO
     public List<Task> readFile(LocalDate date) throws IOException {
         List<Task> tasks = new ArrayList<>();
 
@@ -55,22 +53,22 @@ public class TasksProcessor implements Processor<Task> {
             while ((line = bufferedReader.readLine()) != null) {
                 String[] attributes = line.split(",");
 
-                String title = attributes[0];
-                String description = attributes[1];
-                LocalDateTime creationDate = LocalDateTime.parse(attributes[2]);
-                LocalDateTime lastModificationDate = LocalDateTime.parse(attributes[3]);
-                Status status = Status.valueOf(attributes[4]);
-                Category category = new Category(attributes[5]);
-                Priority priority = Priority.valueOf(attributes[6]);
-                LocalDateTime endTime = LocalDateTime.parse(attributes[7]);
+                int id = Integer.parseInt(attributes[0]);
+                String title = attributes[1];
+                String description = attributes[2];
+                LocalDateTime creationDate = LocalDateTime.parse(attributes[3]);
+                LocalDateTime lastModificationDate = LocalDateTime.parse(attributes[4]);
+                Status status = Status.valueOf(attributes[5]);
+                Category category = new Category(attributes[6]);
+                Priority priority = Priority.valueOf(attributes[7]);
+                LocalDateTime endTime = LocalDateTime.parse(attributes[8]);
 
                 if (endTime.toLocalDate().equals(date)) {
-                    Task task = new Task(title, description, creationDate, lastModificationDate, status, category, priority, endTime);
+                    Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime);
                     tasks.add(task);
                 }
             }
         }
-
         return tasks;
     }
 
@@ -79,8 +77,7 @@ public class TasksProcessor implements Processor<Task> {
             bufferedWriter.append(task.toString());
             bufferedWriter.newLine();
         }
-
-        orderByPriority();
+        reorderFile();
     }
 
     public void writeFile(List<Task> tasks) throws IOException {
@@ -92,34 +89,40 @@ public class TasksProcessor implements Processor<Task> {
         }
     }
 
-    public void updateLine(int textLine, Task updatedTask) throws IOException {
+    public void update(int id, Task updatedTask) throws IOException {
         List<Task> tasks = readFile();
-        updatedTask.setLastModificationDate();
-        tasks.set(textLine, updatedTask);
+        updatedTask.setLastModificationDate(LocalDateTime.now());
+        tasks.set(id - 1, updatedTask);
         writeFile(tasks);
     }
 
-    public void deleteLine(int textLine) throws IOException {
+    public void deleteById(int id) throws IOException {
         List<Task> tasks = readFile();
-        tasks.remove(textLine);
+        tasks.remove(id - 1);
         writeFile(tasks);
     }
 
-    public void orderByCategory() throws IOException {
+    public List<Task> orderByCategory() throws IOException {
         List<Task> tasks = readFile();
-        Collections.sort(tasks, new CategoryComparator());
-        writeFile(tasks);
+        tasks.sort(Task::compareToCategory);
+        return tasks;
     }
 
-    public void orderByStatus() throws IOException {
+    public List<Task> orderByStatus() throws IOException {
         List<Task> tasks = readFile();
-        Collections.sort(tasks, new StatusComparator());
-        writeFile(tasks);
+        tasks.sort(Task::compareToStatus);
+        return tasks;
     }
 
-    public void orderByPriority() throws IOException {
+    public List<Task> orderByPriority() throws IOException {
         List<Task> tasks = readFile();
-        Collections.sort(tasks, new PriorityComparator());
+        tasks.sort(Task::compareToPriority);
+        return tasks;
+    }
+
+    public void reorderFile() throws IOException {
+        List<Task> tasks = readFile();
+        tasks.sort(Task::compareToPriority);
         writeFile(tasks);
     }
 
