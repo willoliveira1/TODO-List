@@ -6,6 +6,7 @@ import br.com.acelerazg.todolist.domain.Status;
 import br.com.acelerazg.todolist.domain.Task;
 import br.com.acelerazg.todolist.infra.service.TaskService;
 import br.com.acelerazg.todolist.infra.util.ObjectHandler;
+import com.sun.media.sound.InvalidFormatException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class TaskView {
@@ -66,25 +68,48 @@ public class TaskView {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         List<Task> tasks = taskService.getAll();
 
-        int id = ObjectHandler.getNextId(tasks);
+        int id;
+        if (tasks.isEmpty()) {
+            id = 1;
+        } else {
+            id = ObjectHandler.getNextId(tasks);
+        }
         System.out.print("Qual o Título da Tarefa? ");
         String title = reader.readLine();
         System.out.print("Qual a Descrição da Tarefa? ");
         String description = reader.readLine();
         System.out.print("Qual o Status da Tarefa? (TODO, DOING, DONE) ");
-        String statusName = reader.readLine().toUpperCase();
-        Status status = Status.valueOf(statusName);
+        Status status;
+        try {
+            String statusName = reader.readLine().toUpperCase();
+            status = Status.valueOf(statusName);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Status inválido.");
+            return;
+        }
         System.out.println("Qual a Categoria da Tarefa? ");
         String name = reader.readLine();
         Category category = new Category(name);
         System.out.println("Qual a Prioridade da Tarefa? (URGENT/HIGH/MEDIUM/MINOR/LOW) ");
-        String priorityName = reader.readLine().toUpperCase();
-        Priority priority = Priority.valueOf(priorityName);
+        Priority priority;
+        try {
+            String priorityName = reader.readLine().toUpperCase();
+            priority = Priority.valueOf(priorityName);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Prioridade inválida.");
+            return;
+        }
         System.out.print("Digite a Data de Encerramento Desejada (DD/MM/AAAA): ");
-        String date = reader.readLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate localDate = LocalDate.parse(date, formatter);
-        LocalDateTime endDate = localDate.atStartOfDay();
+        LocalDateTime endDate = null;
+        try {
+            String date = reader.readLine();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate localDate = LocalDate.parse(date, formatter);
+            endDate = localDate.atStartOfDay();
+        } catch (DateTimeParseException | IllegalArgumentException e) {
+            System.out.println("Data de encerramento está em formato inválido.");
+            return;
+        }
 
         Task task = new Task(id, title, description, status, category, priority, endDate);
         taskService.add(task);
@@ -95,29 +120,55 @@ public class TaskView {
     public void updateTask() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("Qual o id da tarefa a ser atualizada? ");
-        int id = Integer.parseInt(reader.readLine());
+        int id;
+        try {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Id inválido.");
+            return;
+        }
+        Task previousTask = taskService.getById(id);
+        if (previousTask == null) {
+            return;
+        }
+
         System.out.print("Qual o Título da Tarefa? ");
         String title = reader.readLine();
         System.out.print("Qual a Descrição da Tarefa? ");
         String description = reader.readLine();
         System.out.print("Qual o Status da Tarefa? (TODO, DOING, DONE) ");
-        String statusName = reader.readLine().toUpperCase();
-        Status status = Status.valueOf(statusName);
+        Status status = null;
+        try {
+            String statusName = reader.readLine().toUpperCase();
+            status = Status.valueOf(statusName);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Status " + status + "inválido");
+            return;
+        }
         System.out.println("Qual a Categoria da Tarefa? ");
         String name = reader.readLine();
         Category category = new Category(name);
         System.out.println("Qual a Prioridade da Tarefa? (URGENT/HIGH/MEDIUM/MINOR/LOW) ");
-        String priorityName = reader.readLine().toUpperCase();
-        Priority priority = Priority.valueOf(priorityName);
+        Priority priority = null;
+        try {
+            String priorityName = reader.readLine().toUpperCase();
+            priority = Priority.valueOf(priorityName);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Prioridade " + priority + "inválida");
+            return;
+        }
         System.out.print("Digite a Data de Encerramento Desejada (DD/MM/AAAA): ");
-        String date = reader.readLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate localDate = LocalDate.parse(date, formatter);
-        LocalDateTime endDate = localDate.atStartOfDay();
+        LocalDateTime endDate = null;
+        try {
+            String date = reader.readLine();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate localDate = LocalDate.parse(date, formatter);
+            endDate = localDate.atStartOfDay();
+        } catch (InvalidFormatException e) {
+            System.out.println("Data de encerramento está em formato inválido.");
+        }
+
         Task updatedTask = new Task(id, title, description, status, category, priority, endDate);
-
-        Task previousTask = taskService.getById(id);
-
         updatedTask.setCreationDate(previousTask.getCreationDate());
         updatedTask.setLastModificationDate(LocalDateTime.now());
         taskService.update(id, updatedTask);
@@ -129,10 +180,14 @@ public class TaskView {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("Qual a id da tarefa a ser removida? ");
 
-        int id = Integer.parseInt(reader.readLine());
+        int id;
+        try {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Id inválido.");
+            return;
+        }
         taskService.remove(id);
-
-        System.out.println("Tarefa removida com sucesso.");
     }
 
 }

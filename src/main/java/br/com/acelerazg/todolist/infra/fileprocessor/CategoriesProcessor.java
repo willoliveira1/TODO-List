@@ -59,7 +59,13 @@ public class CategoriesProcessor implements Processor<Category> {
     @Override
     public void deleteById(int id) throws IOException {
         List<Category> categories = readFile();
-        categories.remove(id - 1);
+        try {
+            categories.remove(id - 1);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Id não existe.");
+            return;
+        }
+        System.out.println("Categoria removida com sucesso.");
         writeFile(categories);
     }
 

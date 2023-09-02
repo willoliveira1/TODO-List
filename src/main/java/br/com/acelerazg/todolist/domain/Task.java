@@ -97,7 +97,7 @@ public class Task extends Base {
                 creationDate + "," +
                 lastModificationDate + "," +
                 status + "," +
-                category + "," +
+                category.getTitle() + "," +
                 priority + "," +
                 endDate;
     }

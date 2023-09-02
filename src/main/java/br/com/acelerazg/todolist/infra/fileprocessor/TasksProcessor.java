@@ -98,7 +98,13 @@ public class TasksProcessor implements Processor<Task> {
 
     public void deleteById(int id) throws IOException {
         List<Task> tasks = readFile();
-        tasks.remove(id - 1);
+        try {
+            tasks.remove(id - 1);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Id não existe.");
+            return;
+        }
+        System.out.println("Tarefa removida com sucesso.");
         writeFile(tasks);
     }
 
@@ -131,7 +137,7 @@ public class TasksProcessor implements Processor<Task> {
         Map<String, Integer> quantityByCategories = new HashMap<>();
 
         for (Task task : tasks) {
-            String categoryName = task.getCategory().toString();
+            String categoryName = task.getCategory().getTitle();
             quantityByCategories.put(categoryName, quantityByCategories.getOrDefault(categoryName, 0) + 1);
         }
 

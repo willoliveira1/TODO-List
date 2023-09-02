@@ -23,7 +23,12 @@ public class CategoryView {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         List<Category> categories = categoryService.getAll();
 
-        int id = ObjectHandler.getNextId(categories);
+        int id;
+        if (categories.isEmpty()) {
+            id = 1;
+        } else {
+            id = ObjectHandler.getNextId(categories);
+        }
         System.out.println("Qual o nome da categoria a ser adicionada?");
         String name = reader.readLine();
         Category category = new Category(id, name);
@@ -36,12 +41,22 @@ public class CategoryView {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Qual o id da categoria a ser atualizada?");
-        int id = Integer.parseInt(reader.readLine());
+        int id;
+        try {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Id inválido.");
+            return;
+        }
+        Category previousCategory = categoryService.getById(id);
+        if (previousCategory == null) {
+            return;
+        }
         System.out.println("Qual o nome atualizado da categoria?");
         String name = reader.readLine();
 
-        Category category = new Category(id, name);
-        categoryService.update(id, category);
+        Category updatedCategory = new Category(id, name);
+        categoryService.update(id, updatedCategory);
 
         System.out.println("Categoria atualizada com sucesso.");
     }
@@ -50,10 +65,14 @@ public class CategoryView {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("Qual o id da categoria a ser removida? ");
 
-        int id = Integer.parseInt(reader.readLine());
+        int id;
+        try {
+            id = Integer.parseInt(reader.readLine());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Id inválido.");
+            return;
+        }
         categoryService.remove(id);
-
-        System.out.println("Categoria removida com sucesso.");
     }
 
 }
