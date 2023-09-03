@@ -9,7 +9,7 @@ public class BoardView {
     TaskView taskView = new TaskView();
     CategoryView categoryView = new CategoryView();
 
-    public void boardGenerate() throws IOException {
+    public void boardGenerate() {
         initialScreen();
     }
 
@@ -80,7 +80,7 @@ public class BoardView {
         System.out.println(text);
     }
 
-    private void initialScreen() throws IOException {
+    private void initialScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int selectedOption = 0;
         applicationText();
@@ -89,6 +89,8 @@ public class BoardView {
             selectedOption = Integer.parseInt(reader.readLine());
         } catch (IllegalArgumentException e) {
             invalidOptions();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         switch (selectedOption) {
@@ -106,7 +108,7 @@ public class BoardView {
         }
     }
 
-    private void taskScreen() throws IOException {
+    private void taskScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int selectedOption = 0;
         tasksText();
@@ -115,6 +117,8 @@ public class BoardView {
             selectedOption = Integer.parseInt(reader.readLine());
         } catch (IllegalArgumentException e) {
             invalidOptions();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         switch (selectedOption) {
@@ -141,7 +145,7 @@ public class BoardView {
         }
     }
 
-    private void taskListScreen() throws IOException  {
+    private void taskListScreen()  {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int selectedOption = 0;
         tasksListText();
@@ -150,6 +154,8 @@ public class BoardView {
             selectedOption = Integer.parseInt(reader.readLine());
         } catch (IllegalArgumentException e) {
             invalidOptions();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         switch (selectedOption) {
@@ -186,7 +192,7 @@ public class BoardView {
         }
     }
 
-    private void categoriesScreen() throws IOException {
+    private void categoriesScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int selectedOption = 0;
         categoriesText();
@@ -195,6 +201,8 @@ public class BoardView {
             selectedOption = Integer.parseInt(reader.readLine());
         } catch (IllegalArgumentException e) {
             invalidOptions();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
 
         switch (selectedOption) {
@@ -223,10 +231,14 @@ public class BoardView {
         }
     }
 
-    private void backToInitialScreen() throws IOException {
+    private void backToInitialScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("\nAperte enter para continuar...");
-        reader.readLine();
+        try {
+            reader.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         clearConsole();
         initialScreen();
     }
@@ -235,7 +247,7 @@ public class BoardView {
         System.out.println(new String(new char[20]).replace("\0", "\r\n"));
     }
 
-    private void invalidOptions() throws IOException {
+    private void invalidOptions() {
         System.out.println("Opção inválida.");
 
         try {

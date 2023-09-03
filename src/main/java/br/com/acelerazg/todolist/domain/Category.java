@@ -2,12 +2,12 @@ package br.com.acelerazg.todolist.domain;
 
 public class Category extends Base implements Comparable<Category> {
 
-    public Category(int id, String title) {
-        super(id, title);
-    }
-
     public Category(String title) {
         super(title);
+    }
+
+    public Category(int id, String title) {
+        super(id, title);
     }
 
     @Override

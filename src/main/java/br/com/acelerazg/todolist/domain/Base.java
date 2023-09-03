@@ -10,6 +10,7 @@ public abstract class Base {
     }
 
     public Base(String title) {
+        this.title = title;
     }
 
     public int getId() {
