@@ -11,13 +11,13 @@ public class CategoriesProcessor implements Processor<Category> {
     String filePath = "src/main/resources/categories.csv";
 
     @Override
-    public Category readById(int id) throws IOException {
+    public Category readById(int id) {
         List<Category> categories = readFile();
         Category category = categories.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
         return category;
     }
 
-    public List<Category> readFile() throws IOException {
+    public List<Category> readFile() {
         List<Category> categories = new ArrayList<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -29,35 +29,41 @@ public class CategoriesProcessor implements Processor<Category> {
                 Category category = new Category(id, title);
                 categories.add(category);
             }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
         return categories;
     }
 
-    public void writeLine(Category category) throws IOException {
+    public void writeLine(Category category) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath, true))) {
             bufferedWriter.append(category.toString());
             bufferedWriter.newLine();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public void writeFile(List<Category> categories) throws IOException {
+    public void writeFile(List<Category> categories) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
             for (Category category : categories) {
                 bufferedWriter.write(category.toString());
                 bufferedWriter.newLine();
             }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public void update(int id, Category updatedCategory) throws IOException {
+    public void update(int id, Category updatedCategory) {
         List<Category> categories = readFile();
         categories.set(id - 1, updatedCategory);
         writeFile(categories);
     }
 
     @Override
-    public void deleteById(int id) throws IOException {
+    public void deleteById(int id) {
         List<Category> categories = readFile();
         try {
             categories.remove(id - 1);
