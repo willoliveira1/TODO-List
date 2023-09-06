@@ -1,6 +1,6 @@
 # TODO-List
 
-Projeto para desenvolver um TODO List, foi feitra uma aplicação de console desenvolvida em Java. 
+Projeto para desenvolver um TODO List, foi feita uma aplicação de console desenvolvida em Java e uma aplicação Frontend em Javascript, HTML e CSS. 
 
 ## Features
 * CRUD de Tarefas e Categorias
