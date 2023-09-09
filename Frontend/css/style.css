@@ -139,7 +139,7 @@ form {
 }
 
 .form-field label {
-    padding: 0 0 0 px;
+    padding: 0;
 }
 
 .form-field input {

@@ -15,15 +15,20 @@ public class BoardView {
 
     private void applicationText() {
         String text =
-            "##############################\n" +
-            "##                          ##\n" +
-            "##   Aplicação To Do List   ##\n" +
-            "##                          ##\n" +
-            "##############################\n\n" +
-            "Digite a opção desejada:\n" +
-            "1) Tarefas\n" +
-            "2) Categorias\n" +
-            "0) Sair";
+                "##############################\n" +
+                        "##                          ##\n" +
+                        "##   Aplicação To Do List   ##\n" +
+                        "##                          ##\n" +
+                        "##############################";
+        System.out.println(text);
+    }
+
+    private void initialOptionsText() {
+        String text =
+                "Digite a opção desejada:\n" +
+                        "1) Tarefas\n" +
+                        "2) Categorias\n" +
+                        "0) Sair";
         System.out.println(text);
     }
 
@@ -83,7 +88,10 @@ public class BoardView {
     private void initialScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         int selectedOption = 0;
+
         applicationText();
+        taskView.searchAlarms();
+        initialOptionsText();
 
         try {
             selectedOption = Integer.parseInt(reader.readLine());
@@ -233,7 +241,7 @@ public class BoardView {
 
     private void backToInitialScreen() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("\nAperte enter para continuar...");
+        System.out.println("Aperte enter para continuar...");
         try {
             reader.readLine();
         } catch (IOException e) {
@@ -249,13 +257,11 @@ public class BoardView {
 
     private void invalidOptions() {
         System.out.println("Opção inválida.");
-
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         clearConsole();
         initialScreen();
     }
