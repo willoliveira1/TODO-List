@@ -15,7 +15,7 @@ public class TasksProcessor implements Processor<Task> {
     String filePath = "src/main/resources/tasks.csv";
 
     public Task readById(int id) {
-        List<Task> tasks = null;
+        List<Task> tasks;
         tasks = readFile();
 
         Task task = tasks.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
@@ -39,8 +39,17 @@ public class TasksProcessor implements Processor<Task> {
                 Category category = new Category(attributes[6]);
                 Priority priority = Priority.valueOf(attributes[7]);
                 LocalDateTime endTime = LocalDateTime.parse(attributes[8]);
+                String[] alarmsData;
+                List<LocalDateTime> alarms = new ArrayList<>();
 
-                Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime);
+                if (attributes.length == 10) {
+                    alarmsData = attributes[9].split("/");
+                    for (String alarm: alarmsData) {
+                        alarms.add(LocalDateTime.parse(alarm));
+                    }
+                }
+
+                Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime, alarms);
                 tasks.add(task);
             }
         } catch (IOException e) {
@@ -66,9 +75,18 @@ public class TasksProcessor implements Processor<Task> {
                 Category category = new Category(attributes[6]);
                 Priority priority = Priority.valueOf(attributes[7]);
                 LocalDateTime endTime = LocalDateTime.parse(attributes[8]);
+                String[] alarmsData;
+                List<LocalDateTime> alarms = new ArrayList<>();
+
+                if (attributes.length == 10) {
+                    alarmsData = attributes[9].split("/");
+                    for (String alarm: alarmsData) {
+                        alarms.add(LocalDateTime.parse(alarm));
+                    }
+                }
 
                 if (endTime.toLocalDate().equals(date)) {
-                    Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime);
+                    Task task = new Task(id, title, description, creationDate, lastModificationDate, status, category, priority, endTime, alarms);
                     tasks.add(task);
                 }
             }

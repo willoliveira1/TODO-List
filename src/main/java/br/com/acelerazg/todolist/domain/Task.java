@@ -1,6 +1,7 @@
 package br.com.acelerazg.todolist.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Task extends Base {
 
@@ -11,8 +12,10 @@ public class Task extends Base {
     private Status status;
     private Category category;
     private Priority priority;
+    private List<LocalDateTime> alarms;
 
-    public Task(int id, String title, String description, Status status, Category category, Priority priority, LocalDateTime endDate) {
+    public Task(int id, String title, String description, Status status, Category category, Priority priority,
+                LocalDateTime endDate, List<LocalDateTime> alarms) {
         super(id, title);
         this.description = description;
         this.status = status;
@@ -21,9 +24,12 @@ public class Task extends Base {
         this.endDate = endDate;
         this.creationDate = LocalDateTime.now();
         this.lastModificationDate = LocalDateTime.now();
+        this.alarms = alarms;
     }
 
-    public Task(int id, String title, String description, LocalDateTime creationDate, LocalDateTime lastModificationDate, Status status, Category category, Priority priority, LocalDateTime endDate) {
+    public Task(int id, String title, String description, LocalDateTime creationDate,
+                LocalDateTime lastModificationDate, Status status, Category category, Priority priority,
+                LocalDateTime endDate, List<LocalDateTime> alarms) {
         super(id, title);
         this.description = description;
         this.creationDate = creationDate;
@@ -32,6 +38,7 @@ public class Task extends Base {
         this.category = category;
         this.priority = priority;
         this.endDate = endDate;
+        this.alarms = alarms;
     }
 
     public Category getCategory() {
@@ -90,16 +97,37 @@ public class Task extends Base {
         this.priority = priority;
     }
 
+    public List<LocalDateTime> getAlarms() {
+        return alarms;
+    }
+
+    public void setAlarms(List<LocalDateTime> alarms) {
+        this.alarms = alarms;
+    }
+
     @Override
     public String toString() {
-        return  super.toString()  + "," +
+        StringBuilder alarmsList = new StringBuilder();
+        if (!alarms.isEmpty()) {
+            int count = 0;
+            for (LocalDateTime alarm : alarms) {
+                alarmsList.append(alarm.toString());
+                count++;
+                if (count < alarms.size()) {
+                    alarmsList.append("/");
+                }
+            }
+        }
+
+        return super.toString()  + "," +
                 description + "," +
                 creationDate + "," +
                 lastModificationDate + "," +
                 status + "," +
                 category.getTitle() + "," +
                 priority + "," +
-                endDate;
+                endDate + "," +
+                alarmsList;
     }
 
     public int compareToCategory(Task otherTask) {

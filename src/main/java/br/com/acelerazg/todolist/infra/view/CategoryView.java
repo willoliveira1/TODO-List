@@ -30,7 +30,7 @@ public class CategoryView {
             id = ObjectHandler.getNextId(categories);
         }
         System.out.println("Qual o nome da categoria a ser adicionada?");
-        String name = null;
+        String name;
         try {
             name = reader.readLine();
         } catch (IOException e) {
@@ -60,7 +60,7 @@ public class CategoryView {
             return;
         }
         System.out.println("Qual o nome atualizado da categoria?");
-        String name = null;
+        String name;
         try {
             name = reader.readLine();
         } catch (IOException e) {

@@ -11,10 +11,13 @@ import com.sun.media.sound.InvalidFormatException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskView {
@@ -79,24 +82,27 @@ public class TaskView {
         } else {
             id = ObjectHandler.getNextId(tasks);
         }
+
         System.out.print("Qual o Título da Tarefa? ");
-        String title = null;
+        String title;
         try {
             title = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         System.out.print("Qual a Descrição da Tarefa? ");
-        String description = null;
+        String description;
         try {
             description = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.print("Qual o Status da Tarefa? (TODO, DOING, DONE) ");
+
+        System.out.print("Qual o Status da Tarefa (TODO, DOING, DONE)? ");
         Status status;
         try {
-            String statusName = null;
+            String statusName;
             try {
                 statusName = reader.readLine().toUpperCase();
             } catch (IOException e) {
@@ -107,15 +113,17 @@ public class TaskView {
             System.out.println("Status inválido.");
             return;
         }
-        System.out.println("Qual a Categoria da Tarefa? ");
-        String name = null;
+
+        System.out.print("Qual a Categoria da Tarefa? ");
+        String name;
         try {
             name = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         Category category = new Category(name);
-        System.out.println("Qual a Prioridade da Tarefa? (URGENT/HIGH/MEDIUM/MINOR/LOW) ");
+
+        System.out.print("Qual a Prioridade da Tarefa (URGENT/HIGH/MEDIUM/MINOR/LOW)? ");
         Priority priority;
         try {
             String priorityName = reader.readLine().toUpperCase();
@@ -126,21 +134,64 @@ public class TaskView {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         System.out.print("Digite a Data de Encerramento Desejada (DD/MM/AAAA): ");
-        LocalDateTime endDate = null;
+        LocalDate date;
+        LocalTime time;
         try {
-            String date = reader.readLine();
+            String d = reader.readLine();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate localDate = LocalDate.parse(date, formatter);
-            endDate = localDate.atStartOfDay();
+            date = LocalDate.parse(d, formatter);
         } catch (DateTimeParseException | IllegalArgumentException e) {
             System.out.println("Data de encerramento está em formato inválido.");
             return;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        System.out.print("Digite a Hora de Encerramento Desejada (HH:MM): ");
+        try {
+            String h = reader.readLine();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            time = LocalTime.parse(h, formatter);
+        } catch (DateTimeParseException | IllegalArgumentException e) {
+            System.out.println("Data de encerramento está em formato inválido.");
+            return;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        LocalDateTime endDate = LocalDateTime.of(date, time);
 
-        Task task = new Task(id, title, description, status, category, priority, endDate);
+        System.out.print("Deseja adicionar um alarme (S/N)? ");
+        List<LocalDateTime> alarms = new ArrayList<>();
+        try {
+            String response = reader.readLine().toUpperCase();
+
+            while (response.equals("S")) {
+                System.out.print("Deseja ser avisado do prazo com quanto tempo de antecedência (Ex: 15m | 2h | 3d)? ");
+                LocalDateTime alarmDate;
+                String alarm = reader.readLine().toUpperCase();
+                int number = Integer.parseInt(alarm.substring(0, alarm.length() - 1));
+
+                if (alarm.endsWith("H")) {
+                    alarmDate = endDate.minusHours(number);
+                } else if (alarm.endsWith("M")) {
+                    alarmDate = endDate.minusMinutes(number);
+                } else if (alarm.endsWith("D")) {
+                    alarmDate = endDate.minusDays(number);
+                } else {
+                    System.out.println("Alarme incorreto.");
+                    return;
+                }
+
+                alarms.add(alarmDate);
+                System.out.print("Deseja adicionar outro alarme (S/N)? ");
+                response = reader.readLine().toUpperCase();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Task task = new Task(id, title, description, status, category, priority, endDate, alarms);
         taskService.add(task);
 
         System.out.println("Tarefa adicionada com sucesso.");
@@ -164,23 +215,25 @@ public class TaskView {
         }
 
         System.out.print("Qual o Título da Tarefa? ");
-        String title = null;
+        String title;
         try {
             title = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         System.out.print("Qual a Descrição da Tarefa? ");
-        String description = null;
+        String description;
         try {
             description = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         System.out.print("Qual o Status da Tarefa? (TODO, DOING, DONE) ");
         Status status = null;
         try {
-            String statusName = null;
+            String statusName;
             try {
                 statusName = reader.readLine().toUpperCase();
             } catch (IOException e) {
@@ -191,18 +244,20 @@ public class TaskView {
             System.out.println("Status " + status + "inválido");
             return;
         }
+
         System.out.println("Qual a Categoria da Tarefa? ");
-        String name = null;
+        String name;
         try {
             name = reader.readLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         Category category = new Category(name);
+
         System.out.println("Qual a Prioridade da Tarefa? (URGENT/HIGH/MEDIUM/MINOR/LOW) ");
         Priority priority = null;
         try {
-            String priorityName = null;
+            String priorityName;
             try {
                 priorityName = reader.readLine().toUpperCase();
             } catch (IOException e) {
@@ -213,6 +268,7 @@ public class TaskView {
             System.out.println("Prioridade " + priority + "inválida");
             return;
         }
+
         System.out.print("Digite a Data de Encerramento Desejada (DD/MM/AAAA): ");
         LocalDateTime endDate = null;
         try {
@@ -226,7 +282,39 @@ public class TaskView {
             System.out.println(e.getMessage());
         }
 
-        Task updatedTask = new Task(id, title, description, status, category, priority, endDate);
+        System.out.print("Deseja adicionar um alarme (S/N)? ");
+        List<LocalDateTime> alarms = new ArrayList<>();
+        try {
+            String response = reader.readLine().toUpperCase();
+
+            while (response.equals("S")) {
+                System.out.print("Deseja ser avisado do prazo com quanta antecedência (Ex: 15m | 2h | 3d)? ");
+                LocalDateTime alarmDate;
+                String alarm = reader.readLine().toUpperCase();
+                int number = Integer.parseInt(alarm.substring(0, alarm.length() - 1));
+
+                if (alarm.endsWith("H")) {
+                    alarmDate = endDate.minusHours(number);
+                } else if (alarm.endsWith("M")) {
+                    alarmDate = endDate.minusMinutes(number);
+                } else if (alarm.endsWith("D")) {
+                    alarmDate = endDate.minusDays(number);
+                } else {
+                    System.out.println("Alarme incorreto.");
+                    return;
+                }
+
+                alarms.add(alarmDate);
+                alarms.forEach(System.out::println);
+
+                System.out.print("Deseja adicionar outro alarme (S/N)? ");
+                response = reader.readLine().toUpperCase();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Task updatedTask = new Task(id, title, description, status, category, priority, endDate, alarms);
         updatedTask.setCreationDate(previousTask.getCreationDate());
         updatedTask.setLastModificationDate(LocalDateTime.now());
         taskService.update(id, updatedTask);
@@ -248,6 +336,47 @@ public class TaskView {
             System.out.println(e.getMessage());
         }
         taskService.remove(id);
+    }
+
+    public void searchAlarms() {
+        List<Task> tasks = taskService.getAll();
+        StringBuilder alarms = new StringBuilder();
+        boolean hasAlarmTriggered = false;
+
+        for (Task task : tasks) {
+            for (LocalDateTime alarm : task.getAlarms()) {
+                if (alarm.isBefore(LocalDateTime.now())) {
+                    hasAlarmTriggered = true;
+                    Duration duration = Duration.between(alarm, task.getEndDate());
+
+                    long days = duration.toDays();
+                    long hours = duration.minusDays(days).toHours();
+                    long minutes = duration.minusDays(days).minusHours(hours).toMinutes();
+
+                    String timeLeft = "";
+                    if (days != 0) {
+                        timeLeft += days + "d ";
+                    }
+                    if (hours != 0) {
+                        timeLeft += String.format("%02dh", hours) + " ";
+                    }
+                    if (minutes != 0) {
+                        timeLeft += String.format("%02dm", minutes);
+                    }
+
+                    alarms.append("Tarefa: ")
+                            .append(task.getTitle())
+                            .append(" - Tempo restante p/ o prazo: ")
+                            .append(timeLeft)
+                            .append("\n");
+                }
+            }
+        }
+
+        if (hasAlarmTriggered) {
+            System.out.println("\nLista dos alarmes acionados:");
+            System.out.println(alarms);
+        }
     }
 
 }
