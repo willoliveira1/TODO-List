@@ -6,7 +6,6 @@ import br.com.acelerazg.todolist.domain.Status;
 import br.com.acelerazg.todolist.domain.Task;
 import br.com.acelerazg.todolist.infra.service.TaskService;
 import br.com.acelerazg.todolist.infra.util.ObjectHandler;
-import com.sun.media.sound.InvalidFormatException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -276,7 +275,7 @@ public class TaskView {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate localDate = LocalDate.parse(date, formatter);
             endDate = localDate.atStartOfDay();
-        } catch (InvalidFormatException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Data de encerramento está em formato inválido.");
         } catch (IOException e) {
             System.out.println(e.getMessage());

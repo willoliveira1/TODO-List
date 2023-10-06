@@ -10,6 +10,7 @@ Projeto para desenvolver um TODO List, foi feita uma aplicação de console dese
 * Persistência em .csv para manter as Tarefas e Categorias salvas
 * Alarmes para as tarefas
 * Frontend em Javascript, HTML e CSS
+* Utilizado Gradle como build tool
 
 ### Como executar
 O arquivo que tem o método main para a execução do projeto está em: 
